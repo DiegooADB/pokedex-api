@@ -1,9 +1,8 @@
 package me.diego.pokedex.controller;
 
-import me.diego.pokedex.model.User;
+import me.diego.pokedex.model.UserModel;
 import me.diego.pokedex.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +15,8 @@ public class UserController {
     UserDetailsServiceImpl userDetailsService;
 
     @PostMapping
-    public User register(@RequestBody User user) {
-        return userDetailsService.createNewUser(user);
+    public UserModel register(@RequestBody UserModel userModel) {
+        return userDetailsService.createNewUser(userModel);
     }
 
 

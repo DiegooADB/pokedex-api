@@ -13,9 +13,9 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "TB_USER")
-public class User implements UserDetails {
+public class UserModel implements UserDetails {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false, unique = true)
@@ -29,6 +29,12 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
+
+    @OneToOne
+    @JoinTable(name = "TB_USER_TRAINER",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "trainer_id"))
+    private Trainer trainer;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,11 +1,13 @@
 package me.diego.pokedex.service;
 
-import me.diego.pokedex.config.SecurityConfig;
+import me.diego.pokedex.config.security.SecurityConfig;
 import me.diego.pokedex.enums.RoleName;
+import me.diego.pokedex.exception.BadRequestException;
 import me.diego.pokedex.model.Role;
-import me.diego.pokedex.model.User;
+import me.diego.pokedex.model.UserModel;
 import me.diego.pokedex.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,20 +28,42 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     RoleService roleService;
 
-    public User createNewUser(User user) {
+    public UserModel createNewUser(UserModel userModel) {
 
-        String passwordEncoded = securityConfig.passwordEncoder().encode(user.getPassword());
-        user.setPassword(passwordEncoded);
+        userRepository.findByUsername(userModel.getUsername()).ifPresent(userModel1 -> {
+            throw new BadRequestException("User already exists");
+        });
+
+        String passwordEncoded = securityConfig.passwordEncoder().encode(userModel.getPassword());
+        userModel.setPassword(passwordEncoded);
 
         Role userRole = roleService.findRoleByName(RoleName.ROLE_USER);
-        user.setRoles(List.of(userRole));
+        userModel.setRoles(List.of(userRole));
 
-        return userRepository.save(user);
+        return userRepository.save(userModel);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserModel userModel = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
+
+        return new User(
+                userModel.getUsername(),
+                userModel.getPassword(),
+                true,
+                true,
+                true,
+                true,
+                userModel.getAuthorities());
+    }
+
+    public UserModel loadUserModelByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
+    }
+
+    public UserModel saveUser(UserModel userModel) {
+        return userRepository.save(userModel);
     }
 }

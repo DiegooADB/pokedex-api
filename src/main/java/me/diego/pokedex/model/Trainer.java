@@ -3,6 +3,8 @@ package me.diego.pokedex.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -13,7 +15,7 @@ import javax.persistence.*;
 @Table(name = "TB_TRAINER")
 public class Trainer {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)
@@ -24,4 +26,10 @@ public class Trainer {
 
     @Column(nullable = false)
     private int age;
+
+    @ManyToMany
+    @JoinTable(name = "TB_TRAINER_POKEMONS",
+            joinColumns = @JoinColumn(name = "trainer_id"),
+            inverseJoinColumns = @JoinColumn(name = "pokemon_id"))
+    List<Pokemon> pokemons = new ArrayList<>();
 }

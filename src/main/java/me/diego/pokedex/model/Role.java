@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "TB_ROLE")
 public class Role implements GrantedAuthority {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long roleId;
 
     @Enumerated(EnumType.STRING)

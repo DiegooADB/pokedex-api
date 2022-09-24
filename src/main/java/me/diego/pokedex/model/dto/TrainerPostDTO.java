@@ -1,10 +1,9 @@
-package me.diego.pokedex.dto;
+package me.diego.pokedex.model.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import org.springframework.ui.Model;
 
-@Getter
-@Setter
+@Data
 public class TrainerPostDTO {
     private String name;
     private String regionName;

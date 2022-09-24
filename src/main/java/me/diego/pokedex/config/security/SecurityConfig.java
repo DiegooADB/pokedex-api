@@ -1,4 +1,4 @@
-package me.diego.pokedex.config;
+package me.diego.pokedex.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
