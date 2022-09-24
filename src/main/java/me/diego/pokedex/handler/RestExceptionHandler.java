@@ -3,8 +3,9 @@ package me.diego.pokedex.handler;
 import lombok.RequiredArgsConstructor;
 import me.diego.pokedex.exception.BadRequestException;
 import me.diego.pokedex.exception.BadRequestExceptionDetails;
+import me.diego.pokedex.exception.ConflictException;
+import me.diego.pokedex.exception.ConflictExceptionDetails;
 import me.diego.pokedex.utils.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -27,6 +28,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         .title("Bad Request Exception, check the documentation")
                         .details(bre.getMessage())
                         .developerMessage(bre.getClass().getName())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ConflictExceptionDetails> handleConflictException(ConflictException ce) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                ConflictExceptionDetails.builder()
+                        .timestamp(dateUtil.dateTimeFormatter(LocalDateTime.now()))
+                        .status(HttpStatus.CONFLICT.value())
+                        .title("Conflict, " + ce.getType() + " already exists")
+                        .details(ce.getMessage())
+                        .developerMessage(ce.getClass().getName())
                         .build()
         );
     }

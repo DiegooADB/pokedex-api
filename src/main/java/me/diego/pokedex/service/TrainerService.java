@@ -1,5 +1,7 @@
 package me.diego.pokedex.service;
 
+import me.diego.pokedex.exception.BadRequestException;
+import me.diego.pokedex.exception.ConflictException;
 import me.diego.pokedex.model.UserModel;
 import me.diego.pokedex.model.dto.TrainerPostDTO;
 import me.diego.pokedex.model.Region;
@@ -26,7 +28,22 @@ public class TrainerService {
         return trainerRepository.findAll();
     }
 
+    public Trainer findById(long id) {
+        return trainerRepository.findById(id)
+                .orElseThrow(() -> {
+                    throw new BadRequestException("User not found");
+                });
+    }
+
+    public List<Trainer> findByName(String name) {
+        return trainerRepository.findByName(name);
+    }
+
     public Trainer saveTrainer(TrainerPostDTO trainer, UserDetails userDetails) {
+        if (!(findByName(trainer.getName()).isEmpty())) {
+            throw new ConflictException("Trainer with this name already exists", "trainer");
+        }
+
         Region region = regionService.findByRegionNameString(trainer.getRegionName());
 
         Trainer trainerToBeSaved = Trainer.builder()
@@ -42,5 +59,9 @@ public class TrainerService {
         userDetailsService.saveUser(userModel);
 
         return trainerSaved;
+    }
+
+    public Trainer updateTrainerPokemon(Trainer trainer) {
+        return trainerRepository.save(trainer);
     }
 }

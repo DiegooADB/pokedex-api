@@ -3,6 +3,7 @@ package me.diego.pokedex.service;
 import me.diego.pokedex.config.security.SecurityConfig;
 import me.diego.pokedex.enums.RoleName;
 import me.diego.pokedex.exception.BadRequestException;
+import me.diego.pokedex.exception.ConflictException;
 import me.diego.pokedex.model.Role;
 import me.diego.pokedex.model.UserModel;
 import me.diego.pokedex.repository.UserRepository;
@@ -31,7 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserModel createNewUser(UserModel userModel) {
 
         userRepository.findByUsername(userModel.getUsername()).ifPresent(userModel1 -> {
-            throw new BadRequestException("User already exists");
+            throw new ConflictException("User already exists", "user");
         });
 
         String passwordEncoded = securityConfig.passwordEncoder().encode(userModel.getPassword());

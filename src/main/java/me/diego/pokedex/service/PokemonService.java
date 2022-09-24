@@ -1,6 +1,7 @@
 package me.diego.pokedex.service;
 
 import me.diego.pokedex.exception.BadRequestException;
+import me.diego.pokedex.exception.ConflictException;
 import me.diego.pokedex.model.Pokemon;
 import me.diego.pokedex.model.Trainer;
 import me.diego.pokedex.model.UserModel;
@@ -29,21 +30,34 @@ public class PokemonService {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
+    @Autowired
+    TrainerService trainerService;
+
     public Trainer capturePokemon(PokemonPostDto pokemon, UserDetails user) {
         Pokemon pokemonFound = findPokemonById(pokemon.getId());
+        if (pokemonFound.isCaptured()) {
+            throw new ConflictException("Pokemon is already captured", "pokemon");
+        }
+
         UserModel userModel = userDetailsService.loadUserModelByUsername(user.getUsername());
         Trainer trainer = userModel.getTrainer();
+
+        if (trainer == null ) {
+            throw new BadRequestException("You cannot capture a pokemon without create a trainer");
+        }
 
         List<Pokemon> pokemons = trainer.getPokemons();
         pokemons.add(pokemonFound);
 
-        trainer.setPokemons(pokemons);
+        pokemonFound.setCaptured(true);
+        this.updatePokemon(pokemonFound);
 
-        return trainer;
+        trainer.setPokemons(pokemons);
+        return trainerService.updateTrainerPokemon(trainer);
     }
 
-    public Pokemon savePokemon(long id) {
-        Pokemon pokemon = pokeConverter.toPokemonEntity(pokeApiService.findPokemonById(id));
+    public Pokemon savePokemon(PokemonPostDto pokemonPostDto) {
+        Pokemon pokemon = pokeConverter.toPokemonEntity(pokeApiService.findPokemonById(pokemonPostDto.getId()));
 
         return pokemonRepository.save(pokemon);
     }
@@ -52,5 +66,9 @@ public class PokemonService {
         return pokemonRepository.findById(id).orElseThrow(() -> {
             throw new BadRequestException("Pokemon not found");
         });
+    }
+
+    public void updatePokemon(Pokemon pokemon) {
+        pokemonRepository.save(pokemon);
     }
 }

@@ -2,7 +2,6 @@ package me.diego.pokedex.controller;
 
 import me.diego.pokedex.model.Pokemon;
 import me.diego.pokedex.model.Trainer;
-import me.diego.pokedex.model.UserModel;
 import me.diego.pokedex.model.dto.PokemonPostDto;
 import me.diego.pokedex.service.PokemonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +21,9 @@ public class PokemonController {
     PokemonService pokemonService;
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(path = "/register/{pokeId}")
-    public ResponseEntity<Pokemon> registerPokemon(@PathVariable long pokeId) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(pokemonService.savePokemon(pokeId));
+    @PostMapping(path = "/register")
+    public ResponseEntity<Pokemon> registerPokemon(@RequestBody PokemonPostDto pokemonPost) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(pokemonService.savePokemon(pokemonPost));
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")

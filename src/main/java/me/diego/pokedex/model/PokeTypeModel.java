@@ -16,7 +16,7 @@ public class PokeTypeModel {
     @Column(name = "poke_type_id")
     private long id;
 
-    @Column(name = "poke_type")
+    @Column(name = "poke_type", unique = true)
     @Enumerated(EnumType.STRING)
     private PokeType pokeType;
 }

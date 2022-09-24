@@ -31,13 +31,6 @@ public class Pokemon {
             inverseJoinColumns = @JoinColumn(name = "type_id"))
     private List<PokeTypeModel> attributes;
 
-    @Override
-    public String toString() {
-        return "Pokemon{" +
-                "pokeId=" + pokeId +
-                ", pokeName='" + pokeName + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", attributes=" + attributes +
-                '}';
-    }
+    @Column(nullable = false, name = "captured")
+    private boolean captured;
 }
