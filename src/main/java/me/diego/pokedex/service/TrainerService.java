@@ -56,7 +56,7 @@ public class TrainerService {
 
         UserModel userModel = userDetailsService.loadUserModelByUsername(userDetails.getUsername());
         userModel.setTrainer(trainerSaved);
-        userDetailsService.saveUser(userModel);
+        userDetailsService.updateUser(userModel);
 
         return trainerSaved;
     }

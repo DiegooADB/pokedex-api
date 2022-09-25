@@ -25,7 +25,7 @@ public class TrainerController {
         return ResponseEntity.status(HttpStatus.FOUND).body(trainerService.getAllTrainers());
     }
 
-    @PostMapping
+    @PostMapping(path = "/signup")
     public ResponseEntity<Trainer> saveTrainer(@RequestBody TrainerPostDTO trainer, Authentication authentication) {
         UserDetails principal = (UserDetails) authentication.getPrincipal();
 

@@ -2,12 +2,18 @@ package me.diego.pokedex.service;
 
 import me.diego.pokedex.config.security.SecurityConfig;
 import me.diego.pokedex.enums.RoleName;
-import me.diego.pokedex.exception.BadRequestException;
 import me.diego.pokedex.exception.ConflictException;
 import me.diego.pokedex.model.Role;
 import me.diego.pokedex.model.UserModel;
+import me.diego.pokedex.model.dto.UserResponseDTO;
+import me.diego.pokedex.model.dto.UserSignInDTO;
+import me.diego.pokedex.model.dto.UserSignUpDTO;
 import me.diego.pokedex.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,28 +35,49 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     RoleService roleService;
 
-    public UserModel createNewUser(UserModel userModel) {
+    @Autowired
+    AuthenticationManager authenticationManager;
 
-        userRepository.findByUsername(userModel.getUsername()).ifPresent(userModel1 -> {
+    public String registerUser(UserSignUpDTO userDto) {
+        if(userRepository.existsByUsername(userDto.getUsername())) {
             throw new ConflictException("User already exists", "user");
-        });
+        }
 
-        String passwordEncoded = securityConfig.passwordEncoder().encode(userModel.getPassword());
-        userModel.setPassword(passwordEncoded);
+        if(userRepository.existsByEmail(userDto.getEmail())){
+            throw new ConflictException("Email is already taken!", "email");
+        }
+
+        UserModel user = UserModel.builder()
+                .username(userDto.getUsername())
+                .email(userDto.getEmail())
+                .password(securityConfig.passwordEncoder().encode(userDto.getPassword()))
+                .build();
 
         Role userRole = roleService.findRoleByName(RoleName.ROLE_USER);
-        userModel.setRoles(List.of(userRole));
+        user.setRoles(List.of(userRole));
 
-        return userRepository.save(userModel);
+        userRepository.save(user);
+        return "User registered successfully";
+    }
+
+    public String authenticateUser(UserSignInDTO signInDTO) {
+
+        Authentication authenticate = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(
+                        signInDTO.getUsernameOrEmail(), signInDTO.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+
+        return "User signed-in successfully!";
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserModel userModel = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        UserModel userModel = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username or email: " + usernameOrEmail));
 
         return new User(
-                userModel.getUsername(),
+                userModel.getEmail(),
                 userModel.getPassword(),
                 true,
                 true,
@@ -64,7 +91,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username " + username));
     }
 
-    public UserModel saveUser(UserModel userModel) {
-        return userRepository.save(userModel);
+    public void updateUser(UserModel userModel) {
+        userRepository.save(userModel);
     }
 }
