@@ -1,13 +1,11 @@
 package me.diego.pokedex.handler;
 
 import lombok.RequiredArgsConstructor;
-import me.diego.pokedex.exception.BadRequestException;
-import me.diego.pokedex.exception.BadRequestExceptionDetails;
-import me.diego.pokedex.exception.ConflictException;
-import me.diego.pokedex.exception.ConflictExceptionDetails;
+import me.diego.pokedex.exception.*;
 import me.diego.pokedex.utils.DateUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -43,5 +41,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         .developerMessage(ce.getClass().getName())
                         .build()
         );
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<BadCredentialsExceptionDetails> handleBadCredentialsException(BadCredentialsException bce) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                BadCredentialsExceptionDetails.builder()
+                        .timestamp(dateUtil.dateTimeFormatter(LocalDateTime.now()))
+                        .status(HttpStatus.CONFLICT.value())
+                        .title("Password or user is incorrect")
+                        .details(bce.getMessage())
+                        .developerMessage(bce.getClass().getName())
+                        .build()
+        );
+
     }
 }

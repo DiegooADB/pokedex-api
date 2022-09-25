@@ -31,5 +31,5 @@ public class Trainer {
     @JoinTable(name = "TB_TRAINER_POKEMONS",
             joinColumns = @JoinColumn(name = "trainer_id"),
             inverseJoinColumns = @JoinColumn(name = "pokemon_id"))
-    List<Pokemon> pokemons = new ArrayList<>();
+    private List<Pokemon> pokemons = new ArrayList<>();
 }

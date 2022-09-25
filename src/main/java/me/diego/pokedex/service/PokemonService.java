@@ -12,6 +12,7 @@ import me.diego.pokedex.utils.PokeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class PokemonService {
     @Autowired
     TrainerService trainerService;
 
+    @Transactional
     public Trainer capturePokemon(PokemonPostDto pokemon, UserDetails user) {
         Pokemon pokemonFound = findPokemonById(pokemon.getId());
         if (pokemonFound.isCaptured()) {
@@ -56,6 +58,7 @@ public class PokemonService {
         return trainerService.updateTrainerPokemon(trainer);
     }
 
+    @Transactional
     public Pokemon savePokemon(PokemonPostDto pokemonPostDto) {
         Pokemon pokemon = pokeConverter.toPokemonEntity(pokeApiService.findPokemonById(pokemonPostDto.getId()));
 
@@ -68,6 +71,7 @@ public class PokemonService {
         });
     }
 
+    @Transactional
     public void updatePokemon(Pokemon pokemon) {
         pokemonRepository.save(pokemon);
     }

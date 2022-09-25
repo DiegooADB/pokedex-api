@@ -19,15 +19,4 @@ public class RoleService {
                 .orElseThrow(() -> new BadRequestException("Role " + roleName.toString() + " not found"));
 
     }
-
-    public Role saveRole() {
-        Role user = new Role();
-        user.setRoleName(RoleName.ROLE_USER);
-
-        Role admin = new Role();
-        admin.setRoleName(RoleName.ROLE_ADMIN);
-
-        roleRepository.save(user);
-        return roleRepository.save(admin);
-    }
 }
