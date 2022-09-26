@@ -1,11 +1,6 @@
 package me.diego.pokedex.service.pokeapi;
 
 import lombok.Data;
-import me.diego.pokedex.model.PokeTypeModel;
-import me.diego.pokedex.model.Pokemon;
-import me.diego.pokedex.service.PokeTypeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 import java.util.Map;

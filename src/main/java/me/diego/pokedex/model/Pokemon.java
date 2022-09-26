@@ -9,8 +9,6 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "TB_POKEMON")
 public class Pokemon {
 
@@ -33,4 +31,15 @@ public class Pokemon {
 
     @Column(nullable = false, name = "captured")
     private boolean captured;
+
+    public Pokemon(long pokeId, String pokeName, String imageUrl, List<PokeTypeModel> attributes, boolean captured) {
+        this.pokeId = pokeId;
+        this.pokeName = pokeName;
+        this.imageUrl = imageUrl;
+        this.attributes = attributes;
+        this.captured = captured;
+    }
+
+    public Pokemon() {
+    }
 }

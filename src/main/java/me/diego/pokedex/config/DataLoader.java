@@ -9,21 +9,21 @@ import me.diego.pokedex.model.Role;
 import me.diego.pokedex.repository.PokeTypeRepository;
 import me.diego.pokedex.repository.RegionRepository;
 import me.diego.pokedex.repository.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DataLoader implements ApplicationRunner {
-    @Autowired
-    RegionRepository regionRepository;
+    private final RegionRepository regionRepository;
+    private final RoleRepository roleRepository;
+    private final PokeTypeRepository pokeTypeRepository;
 
-    @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    PokeTypeRepository pokeTypeRepository;
+    public DataLoader(RegionRepository regionRepository, RoleRepository roleRepository, PokeTypeRepository pokeTypeRepository) {
+        this.regionRepository = regionRepository;
+        this.roleRepository = roleRepository;
+        this.pokeTypeRepository = pokeTypeRepository;
+    }
 
     @Override
     public void run(ApplicationArguments args) {

@@ -10,10 +10,9 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "TB_TRAINER")
 public class Trainer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -32,4 +31,15 @@ public class Trainer {
             joinColumns = @JoinColumn(name = "trainer_id"),
             inverseJoinColumns = @JoinColumn(name = "pokemon_id"))
     private List<Pokemon> pokemons = new ArrayList<>();
+
+    public Trainer(long id, String name, Region region, int age, List<Pokemon> pokemons) {
+        this.id = id;
+        this.name = name;
+        this.region = region;
+        this.age = age;
+        this.pokemons = pokemons;
+    }
+
+    public Trainer() {
+    }
 }

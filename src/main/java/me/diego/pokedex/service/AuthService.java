@@ -8,7 +8,6 @@ import me.diego.pokedex.model.Role;
 import me.diego.pokedex.model.UserModel;
 import me.diego.pokedex.model.dto.UserSignInDTO;
 import me.diego.pokedex.model.dto.UserSignUpDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,20 +19,20 @@ import java.util.List;
 
 @Service
 public class AuthService {
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    JwtTokenService jwtTokenService;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final JwtTokenService jwtTokenService;
+    private final AuthenticationManager authenticationManager;
+    private final SecurityConfig securityConfig;
+    private final RoleService roleService;
 
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    SecurityConfig securityConfig;
-
-    @Autowired
-    RoleService roleService;
+    public AuthService(UserDetailsServiceImpl userDetailsService, JwtTokenService jwtTokenService, AuthenticationManager authenticationManager, SecurityConfig securityConfig, RoleService roleService) {
+        this.userDetailsService = userDetailsService;
+        this.jwtTokenService = jwtTokenService;
+        this.authenticationManager = authenticationManager;
+        this.securityConfig = securityConfig;
+        this.roleService = roleService;
+    }
 
     public String signInUser(UserSignInDTO userSignIn) {
         try {

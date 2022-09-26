@@ -12,8 +12,6 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "TB_USER")
 public class UserModel implements UserDetails {
     @Id
@@ -40,6 +38,18 @@ public class UserModel implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "trainer_id"))
     private Trainer trainer;
+
+    public UserModel(long id, String username, String email, String password, List<Role> roles, Trainer trainer) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+        this.trainer = trainer;
+    }
+
+    public UserModel() {
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

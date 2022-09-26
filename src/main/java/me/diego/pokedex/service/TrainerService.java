@@ -10,7 +10,6 @@ import me.diego.pokedex.model.Trainer;
 import me.diego.pokedex.model.UserModel;
 import me.diego.pokedex.model.dto.TrainerPostDTO;
 import me.diego.pokedex.repository.TrainerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,14 +19,15 @@ import java.util.Map;
 
 @Service
 public class TrainerService {
-    @Autowired
-    TrainerRepository trainerRepository;
+    private final TrainerRepository trainerRepository;
+    private final RegionService regionService;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    RegionService regionService;
-
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    public TrainerService(TrainerRepository trainerRepository, RegionService regionService, UserDetailsServiceImpl userDetailsService) {
+        this.trainerRepository = trainerRepository;
+        this.regionService = regionService;
+        this.userDetailsService = userDetailsService;
+    }
 
     public List<Trainer> getAllTrainers() {
         return trainerRepository.findAll();

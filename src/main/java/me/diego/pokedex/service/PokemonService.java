@@ -9,7 +9,6 @@ import me.diego.pokedex.model.dto.PokemonPostDto;
 import me.diego.pokedex.repository.PokemonRepository;
 import me.diego.pokedex.service.pokeapi.PokeApiService;
 import me.diego.pokedex.utils.PokeConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,20 +18,19 @@ import java.util.List;
 @Service
 public class PokemonService {
 
-    @Autowired
-    PokemonRepository pokemonRepository;
+    private final PokemonRepository pokemonRepository;
+    private final PokeApiService pokeApiService;
+    private final PokeConverter pokeConverter;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final TrainerService trainerService;
 
-    @Autowired
-    PokeApiService pokeApiService;
-
-    @Autowired
-    PokeConverter pokeConverter;
-
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
-    TrainerService trainerService;
+    public PokemonService(PokemonRepository pokemonRepository, PokeApiService pokeApiService, PokeConverter pokeConverter, UserDetailsServiceImpl userDetailsService, TrainerService trainerService) {
+        this.pokemonRepository = pokemonRepository;
+        this.pokeApiService = pokeApiService;
+        this.pokeConverter = pokeConverter;
+        this.userDetailsService = userDetailsService;
+        this.trainerService = trainerService;
+    }
 
     @Transactional
     public Trainer capturePokemon(PokemonPostDto pokemon, UserDetails user) {
@@ -44,7 +42,7 @@ public class PokemonService {
         UserModel userModel = userDetailsService.loadUserModelByUsername(user.getUsername());
         Trainer trainer = userModel.getTrainer();
 
-        if (trainer == null ) {
+        if (trainer == null) {
             throw new BadRequestException("You cannot capture a pokemon without create a trainer");
         }
 

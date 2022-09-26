@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Setter
 @Table(name = "tb_poke_type")
 public class PokeTypeModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "poke_type_id")

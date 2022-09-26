@@ -4,7 +4,6 @@ import me.diego.pokedex.model.Pokemon;
 import me.diego.pokedex.model.Trainer;
 import me.diego.pokedex.model.dto.PokemonPostDto;
 import me.diego.pokedex.service.PokemonService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,9 +15,11 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/pokemon")
 public class PokemonController {
+    private final PokemonService pokemonService;
 
-    @Autowired
-    PokemonService pokemonService;
+    public PokemonController(PokemonService pokemonService) {
+        this.pokemonService = pokemonService;
+    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/register")

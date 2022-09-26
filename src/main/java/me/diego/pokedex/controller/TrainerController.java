@@ -3,7 +3,6 @@ package me.diego.pokedex.controller;
 import me.diego.pokedex.model.Trainer;
 import me.diego.pokedex.model.dto.TrainerPostDTO;
 import me.diego.pokedex.service.TrainerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,8 +15,11 @@ import java.util.Map;
 @PreAuthorize("isAuthenticated()")
 @RequestMapping(path = "/trainer")
 public class TrainerController {
-    @Autowired
-    TrainerService trainerService;
+    private final TrainerService trainerService;
+
+    public TrainerController(TrainerService trainerService) {
+        this.trainerService = trainerService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Trainer>> listAllTrainer() {

@@ -1,6 +1,5 @@
 package me.diego.pokedex.handler;
 
-import lombok.RequiredArgsConstructor;
 import me.diego.pokedex.exception.*;
 import me.diego.pokedex.utils.DateUtil;
 import org.springframework.http.HttpStatus;
@@ -13,9 +12,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.time.LocalDateTime;
 
 @ControllerAdvice
-@RequiredArgsConstructor
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private final DateUtil dateUtil;
+
+    public RestExceptionHandler(DateUtil dateUtil) {
+        this.dateUtil = dateUtil;
+    }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<BadRequestExceptionDetails> handleBadRequestException(BadRequestException bre) {

@@ -4,7 +4,6 @@ import me.diego.pokedex.model.PokeTypeModel;
 import me.diego.pokedex.model.Pokemon;
 import me.diego.pokedex.service.PokeTypeService;
 import me.diego.pokedex.service.pokeapi.PokemonApiModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,8 +11,11 @@ import java.util.Map;
 
 @Component
 public class PokeConverter {
-    @Autowired
-    PokeTypeService pokeTypeService;
+    private final PokeTypeService pokeTypeService;
+
+    public PokeConverter(PokeTypeService pokeTypeService) {
+        this.pokeTypeService = pokeTypeService;
+    }
 
     public Pokemon toPokemonEntity(PokemonApiModel pokemonApiModel) {
         String imageURL = (String) pokemonApiModel.getSprites().get("front_default");
