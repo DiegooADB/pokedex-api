@@ -7,6 +7,8 @@ import me.diego.pokedex.model.Trainer;
 import me.diego.pokedex.model.UserModel;
 import me.diego.pokedex.model.dto.TrainerPostDTO;
 import me.diego.pokedex.repository.TrainerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +29,8 @@ public class TrainerService {
         this.authService = authService;
     }
 
-    public List<Trainer> getAllTrainers() {
-        return trainerRepository.findAll();
+    public Page<Trainer> getAllTrainers(Pageable pageable) {
+        return trainerRepository.findAll(pageable);
     }
 
     public Trainer findById(long id) {
@@ -68,6 +70,12 @@ public class TrainerService {
     @Transactional
     public Trainer updateTrainerPokemon(Trainer trainer) {
         return trainerRepository.save(trainer);
+    }
+
+    public Page<Trainer> getTrainerByRegion(String regionName, Pageable pageable) {
+        Region regionFound = regionService.findByRegionNameString(regionName);
+
+        return trainerRepository.findByRegion(regionFound, pageable);
     }
 }
 

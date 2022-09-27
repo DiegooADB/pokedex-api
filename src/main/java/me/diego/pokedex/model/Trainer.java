@@ -21,6 +21,9 @@ public class Trainer {
     private String name;
 
     @ManyToOne
+    @JoinTable(name = "TB_TRAINER_REGION",
+            joinColumns = @JoinColumn(name = "trainer_id"),
+            inverseJoinColumns = @JoinColumn(name = "region_id"))
     private Region region;
 
     @Column(nullable = false)
