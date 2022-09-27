@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = "/auth")
 public class AuthController {
@@ -20,12 +22,12 @@ public class AuthController {
     }
 
     @PostMapping(path = "/signin")
-    public ResponseEntity<String> signIn(@RequestBody UserSignInDTO userSignIn) {
+    public ResponseEntity<String> signIn(@Valid @RequestBody UserSignInDTO userSignIn) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.signInUser(userSignIn));
     }
 
     @PostMapping(path = "/signup")
-    public ResponseEntity<String> signUp(@RequestBody UserSignUpDTO userSignUp) {
+    public ResponseEntity<String> signUp(@Valid @RequestBody UserSignUpDTO userSignUp) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.registerUser(userSignUp));
     }
 }

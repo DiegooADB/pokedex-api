@@ -7,10 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.CONFLICT)
 @Getter
 public class ConflictException extends RuntimeException {
-    private final String type;
-
-    public ConflictException(String message, String type) {
+    public ConflictException(String message) {
         super(message);
-        this.type = type;
     }
 }

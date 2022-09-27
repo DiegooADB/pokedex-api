@@ -9,11 +9,11 @@ import me.diego.pokedex.model.dto.PokemonPostDto;
 import me.diego.pokedex.repository.PokemonRepository;
 import me.diego.pokedex.service.pokeapi.PokeApiService;
 import me.diego.pokedex.utils.PokeConverter;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PokemonService {
@@ -23,23 +23,26 @@ public class PokemonService {
     private final PokeConverter pokeConverter;
     private final UserDetailsServiceImpl userDetailsService;
     private final TrainerService trainerService;
+    private final AuthService authService;
 
-    public PokemonService(PokemonRepository pokemonRepository, PokeApiService pokeApiService, PokeConverter pokeConverter, UserDetailsServiceImpl userDetailsService, TrainerService trainerService) {
+    public PokemonService(PokemonRepository pokemonRepository, PokeApiService pokeApiService, PokeConverter pokeConverter, UserDetailsServiceImpl userDetailsService, TrainerService trainerService, AuthService authService) {
         this.pokemonRepository = pokemonRepository;
         this.pokeApiService = pokeApiService;
         this.pokeConverter = pokeConverter;
         this.userDetailsService = userDetailsService;
         this.trainerService = trainerService;
+        this.authService = authService;
     }
 
     @Transactional
-    public Trainer capturePokemon(PokemonPostDto pokemon, UserDetails user) {
-        Pokemon pokemonFound = findPokemonById(pokemon.getId());
+    public Trainer capturePokemon(PokemonPostDto pokemon, Map<String, String> headers) {
+        Pokemon pokemonFound = findPokemonById(pokemon.getPokeId());
         if (pokemonFound.isCaptured()) {
-            throw new ConflictException("Pokemon is already captured", "pokemon");
+            throw new ConflictException("Pokemon is already captured");
         }
 
-        UserModel userModel = userDetailsService.loadUserModelByUsername(user.getUsername());
+        String username = authService.getUsernameByJwt(headers);
+        UserModel userModel = userDetailsService.loadUserModelByUsername(username);
         Trainer trainer = userModel.getTrainer();
 
         if (trainer == null) {
@@ -58,7 +61,7 @@ public class PokemonService {
 
     @Transactional
     public Pokemon savePokemon(PokemonPostDto pokemonPostDto) {
-        Pokemon pokemon = pokeConverter.toPokemonEntity(pokeApiService.findPokemonById(pokemonPostDto.getId()));
+        Pokemon pokemon = pokeConverter.toPokemonEntity(pokeApiService.findPokemonById(pokemonPostDto.getPokeId()));
 
         return pokemonRepository.save(pokemon);
     }

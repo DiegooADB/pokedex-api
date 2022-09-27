@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class TrainerController {
     }
 
     @PostMapping(path = "/signup")
-    public ResponseEntity<Trainer> saveTrainer(@RequestBody TrainerPostDTO trainer, @RequestHeader Map<String, String> headers) {
+    public ResponseEntity<Trainer> saveTrainer(@Valid @RequestBody TrainerPostDTO trainer, @RequestHeader Map<String, String> headers) {
         return ResponseEntity.status(HttpStatus.CREATED).body(trainerService.saveTrainer(trainer, headers));
     }
 }

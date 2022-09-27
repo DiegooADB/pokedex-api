@@ -1,5 +1,6 @@
 package me.diego.pokedex.config.security;
 
+import me.diego.pokedex.model.UserModel;
 import me.diego.pokedex.service.UserDetailsServiceImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,7 +43,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             return;
         }
 
-        UserDetails user = userDetailsService.loadUserByUsername(username);
+        UserModel user = userDetailsService.loadUserModelByUsername(username);
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

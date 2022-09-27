@@ -1,13 +1,17 @@
 package me.diego.pokedex.service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import me.diego.pokedex.config.security.JwtTokenService;
 import me.diego.pokedex.config.security.SecurityConfig;
+import me.diego.pokedex.config.security.SecurityConstants;
 import me.diego.pokedex.enums.RoleName;
 import me.diego.pokedex.exception.ConflictException;
 import me.diego.pokedex.model.Role;
 import me.diego.pokedex.model.UserModel;
 import me.diego.pokedex.model.dto.UserSignInDTO;
 import me.diego.pokedex.model.dto.UserSignUpDTO;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AuthService {
@@ -49,7 +54,7 @@ public class AuthService {
     @Transactional
     public String registerUser(UserSignUpDTO userDto) {
         if (userDetailsService.existsUsernameOrEmail(userDto)) {
-            throw new ConflictException("Username or email is already taken!", "username or email");
+            throw new ConflictException("Username or email is already taken!");
         }
 
         UserModel user = UserModel.builder()
@@ -63,5 +68,13 @@ public class AuthService {
 
         userDetailsService.save(user);
         return "User registered successfully";
+    }
+
+    public String getUsernameByJwt(Map<String, String> headers) {
+        String token = headers.get(HttpHeaders.AUTHORIZATION.toLowerCase());
+
+        String rawJwt = token.replace(SecurityConstants.PREFIX_TOKEN, "");
+        DecodedJWT decode = JWT.decode(rawJwt);
+        return decode.getSubject();
     }
 }
