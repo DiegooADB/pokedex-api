@@ -2,16 +2,16 @@ package me.diego.pokedex.controller;
 
 import me.diego.pokedex.model.Pokemon;
 import me.diego.pokedex.model.Trainer;
-import me.diego.pokedex.model.dto.PokemonPostDto;
+import me.diego.pokedex.model.dto.PokemonPopulateDTO;
+import me.diego.pokedex.model.dto.PokemonPostDTO;
 import me.diego.pokedex.service.PokemonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,13 +26,19 @@ public class PokemonController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/register")
-    public ResponseEntity<Pokemon> registerPokemon(@Valid @RequestBody PokemonPostDto pokemonPost) {
+    public ResponseEntity<Pokemon> registerPokemon(@Valid @RequestBody PokemonPostDTO pokemonPost) {
         return ResponseEntity.status(HttpStatus.CREATED).body(pokemonService.savePokemon(pokemonPost));
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(path = "/capture")
-    public ResponseEntity<Trainer> capturePokemon(@Valid @RequestBody PokemonPostDto pokemonDto, @RequestHeader Map<String, String> headers) {
+    public ResponseEntity<Trainer> capturePokemon(@Valid @RequestBody PokemonPostDTO pokemonDto, @RequestHeader Map<String, String> headers) {
         return ResponseEntity.status(HttpStatus.CREATED).body(pokemonService.capturePokemon(pokemonDto, headers));
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping(path = "/populate")
+    public ResponseEntity<List<Pokemon>> populateDbWithPokemon(@Valid @RequestBody PokemonPopulateDTO pokemonPopulateDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(pokemonService.populateDb(pokemonPopulateDTO));
     }
 }

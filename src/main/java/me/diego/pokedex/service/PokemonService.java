@@ -5,9 +5,11 @@ import me.diego.pokedex.exception.ConflictException;
 import me.diego.pokedex.model.Pokemon;
 import me.diego.pokedex.model.Trainer;
 import me.diego.pokedex.model.UserModel;
-import me.diego.pokedex.model.dto.PokemonPostDto;
+import me.diego.pokedex.model.dto.PokemonPopulateDTO;
+import me.diego.pokedex.model.dto.PokemonPostDTO;
 import me.diego.pokedex.repository.PokemonRepository;
 import me.diego.pokedex.service.pokeapi.PokeApiService;
+import me.diego.pokedex.service.pokeapi.PokemonApiModel;
 import me.diego.pokedex.utils.PokeConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +37,7 @@ public class PokemonService {
     }
 
     @Transactional
-    public Trainer capturePokemon(PokemonPostDto pokemon, Map<String, String> headers) {
+    public Trainer capturePokemon(PokemonPostDTO pokemon, Map<String, String> headers) {
         Pokemon pokemonFound = findPokemonById(pokemon.getPokeId());
         if (pokemonFound.isCaptured()) {
             throw new ConflictException("Pokemon is already captured");
@@ -60,7 +62,7 @@ public class PokemonService {
     }
 
     @Transactional
-    public Pokemon savePokemon(PokemonPostDto pokemonPostDto) {
+    public Pokemon savePokemon(PokemonPostDTO pokemonPostDto) {
         Pokemon pokemon = pokeConverter.toPokemonEntity(pokeApiService.findPokemonById(pokemonPostDto.getPokeId()));
 
         return pokemonRepository.save(pokemon);
@@ -75,5 +77,10 @@ public class PokemonService {
     @Transactional
     public void updatePokemon(Pokemon pokemon) {
         pokemonRepository.save(pokemon);
+    }
+
+    public List<Pokemon> populateDb(PokemonPopulateDTO pokemonPopulateDTO) {
+        return pokeConverter.toPokemonEntityList(pokeApiService.getListOfPokemon(pokemonPopulateDTO.getQuantity())).stream()
+                .map(pokemonRepository::save).toList();
     }
 }
