@@ -41,8 +41,14 @@ public class AuthService {
 
     public String signInUser(UserSignInDTO userSignIn) {
         try {
+            String username = userSignIn.getUsernameOrEmail();
+            String userByEmail = userDetailsService.findUserByEmail(userSignIn.getUsernameOrEmail());
+
+            if(!(userByEmail == null)) {
+                username = userByEmail;
+            }
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    userSignIn.getUsernameOrEmail(), userSignIn.getPassword()));
+                    username, userSignIn.getPassword()));
         } catch (final BadCredentialsException ex) {
             throw new BadCredentialsException("Username or password is incorrect");
         }

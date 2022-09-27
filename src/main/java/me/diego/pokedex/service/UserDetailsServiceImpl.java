@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -47,6 +48,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return userRepository.existsByUsername(userSignUp.getUsername()) ||
                 userRepository.existsByEmail(userSignUp.getEmail());
     }
+
+    public String findUserByEmail(String email) {
+        Optional<UserModel> userFound = userRepository.findByEmail(email);
+
+        return userFound.map(UserModel::getUsername).orElse(null);
+    }
+
     @Transactional
     public void save(UserModel userModel) {
         userRepository.save(userModel);
