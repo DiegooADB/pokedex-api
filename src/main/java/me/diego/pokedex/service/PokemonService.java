@@ -2,15 +2,18 @@ package me.diego.pokedex.service;
 
 import me.diego.pokedex.exception.BadRequestException;
 import me.diego.pokedex.exception.ConflictException;
+import me.diego.pokedex.model.PokeTypeModel;
 import me.diego.pokedex.model.Pokemon;
 import me.diego.pokedex.model.Trainer;
 import me.diego.pokedex.model.UserModel;
 import me.diego.pokedex.model.dto.PokemonPopulateDTO;
 import me.diego.pokedex.model.dto.PokemonPostDTO;
+import me.diego.pokedex.repository.PokeTypeRepository;
 import me.diego.pokedex.repository.PokemonRepository;
 import me.diego.pokedex.service.pokeapi.PokeApiService;
 import me.diego.pokedex.utils.PokeConverter;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +30,16 @@ public class PokemonService {
     private final UserDetailsServiceImpl userDetailsService;
     private final TrainerService trainerService;
     private final AuthService authService;
+    private final PokeTypeRepository pokeTypeRepository;
 
-    public PokemonService(PokemonRepository pokemonRepository, PokeApiService pokeApiService, PokeConverter pokeConverter, UserDetailsServiceImpl userDetailsService, TrainerService trainerService, AuthService authService) {
+    public PokemonService(PokemonRepository pokemonRepository, PokeApiService pokeApiService, PokeConverter pokeConverter, UserDetailsServiceImpl userDetailsService, TrainerService trainerService, AuthService authService, PokeTypeService pokeTypeService, PokeTypeRepository pokeTypeRepository) {
         this.pokemonRepository = pokemonRepository;
         this.pokeApiService = pokeApiService;
         this.pokeConverter = pokeConverter;
         this.userDetailsService = userDetailsService;
         this.trainerService = trainerService;
         this.authService = authService;
+        this.pokeTypeRepository = pokeTypeRepository;
     }
 
     @Transactional
@@ -80,12 +85,34 @@ public class PokemonService {
         pokemonRepository.save(pokemon);
     }
 
+    @Transactional
     public List<Pokemon> populateDb(PokemonPopulateDTO pokemonPopulateDTO) {
         return pokeConverter.toPokemonEntityList(pokeApiService.getListOfPokemon(pokemonPopulateDTO.getQuantity())).stream()
                 .map(pokemonRepository::save).toList();
     }
 
+    public Page<Pokemon> listAllAvailablePokemonByType(String pokeType, Pageable pageable) {
+
+        List<Pokemon> pokemons = this.findPokeIdByType(pokeType).stream()
+                .map(this::findPokemonById)
+                .filter(pokemon -> !pokemon.isCaptured())
+                .toList();
+
+        return new PageImpl<Pokemon>(pokemons, pageable, pokemons.size());
+
+    }
+
     public Page<Pokemon> listAllAvailablePokemon(Pageable pageable) {
         return pokemonRepository.findByCapturedFalse(pageable);
+    }
+
+    private PokeTypeModel findByPokeTypeString(String pokeType) {
+        return pokeTypeRepository.findByPokeTypeString(pokeType.toUpperCase())
+                .orElseThrow(() -> new BadRequestException("Poke type not found"));
+    }
+
+    private List<Long> findPokeIdByType(String pokeType) {
+        PokeTypeModel pokeTypeFound = this.findByPokeTypeString(pokeType);
+        return pokeTypeRepository.findPokemonByPokeType(pokeTypeFound.getId());
     }
 }

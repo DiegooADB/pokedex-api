@@ -33,7 +33,6 @@ public class PokemonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(pokemonService.savePokemon(pokemonPost));
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(path = "/capture")
     public ResponseEntity<Trainer> capturePokemon(@Valid @RequestBody PokemonPostDTO pokemonDto, @RequestHeader Map<String, String> headers) {
         return ResponseEntity.status(HttpStatus.CREATED).body(pokemonService.capturePokemon(pokemonDto, headers));
@@ -45,9 +44,11 @@ public class PokemonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(pokemonService.populateDb(pokemonPopulateDTO));
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping(path = "/available")
-    public ResponseEntity<Page<Pokemon>> getAvailablePokemon(@PageableDefault Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.FOUND).body(pokemonService.listAllAvailablePokemon(pageable));
+    public ResponseEntity<Page<Pokemon>> getAvailablePokemon(@RequestParam(required = false) String pokeType, @PageableDefault Pageable pageable) {
+        if(pokeType == null ){
+            return ResponseEntity.status(HttpStatus.FOUND).body(pokemonService.listAllAvailablePokemon(pageable));
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).body(pokemonService.listAllAvailablePokemonByType(pokeType, pageable));
     }
 }

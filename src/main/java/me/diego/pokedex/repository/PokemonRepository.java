@@ -1,5 +1,6 @@
 package me.diego.pokedex.repository;
 
+import me.diego.pokedex.model.PokeTypeModel;
 import me.diego.pokedex.model.Pokemon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
