@@ -14,7 +14,4 @@ import java.util.Optional;
 public interface PokeTypeRepository extends JpaRepository<PokeTypeModel, Long> {
     @Query(value = " SELECT * FROM tb_poke_type WHERE poke_type = ?1 ", nativeQuery = true)
     Optional<PokeTypeModel> findByPokeTypeString(String pokeType);
-
-    @Query(value = "SELECT pokemon_id FROM tb_pokemon_type where type_id = ?1 ", nativeQuery = true)
-    List<Long> findPokemonByPokeType(long typeId);
 }

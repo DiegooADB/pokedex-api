@@ -46,9 +46,6 @@ public class PokemonController {
 
     @GetMapping(path = "/available")
     public ResponseEntity<Page<Pokemon>> getAvailablePokemon(@RequestParam(required = false) String pokeType, @PageableDefault Pageable pageable) {
-        if(pokeType == null ){
-            return ResponseEntity.status(HttpStatus.FOUND).body(pokemonService.listAllAvailablePokemon(pageable));
-        }
         return ResponseEntity.status(HttpStatus.FOUND).body(pokemonService.listAllAvailablePokemonByType(pokeType, pageable));
     }
 }

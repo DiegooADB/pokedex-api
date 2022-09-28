@@ -92,27 +92,10 @@ public class PokemonService {
     }
 
     public Page<Pokemon> listAllAvailablePokemonByType(String pokeType, Pageable pageable) {
+        if (pokeType == null) {
+            return pokemonRepository.findByCapturedFalse(pageable);
+        }
 
-        List<Pokemon> pokemons = this.findPokeIdByType(pokeType).stream()
-                .map(this::findPokemonById)
-                .filter(pokemon -> !pokemon.isCaptured())
-                .toList();
-
-        return new PageImpl<Pokemon>(pokemons, pageable, pokemons.size());
-
-    }
-
-    public Page<Pokemon> listAllAvailablePokemon(Pageable pageable) {
-        return pokemonRepository.findByCapturedFalse(pageable);
-    }
-
-    private PokeTypeModel findByPokeTypeString(String pokeType) {
-        return pokeTypeRepository.findByPokeTypeString(pokeType.toUpperCase())
-                .orElseThrow(() -> new BadRequestException("Poke type not found"));
-    }
-
-    private List<Long> findPokeIdByType(String pokeType) {
-        PokeTypeModel pokeTypeFound = this.findByPokeTypeString(pokeType);
-        return pokeTypeRepository.findPokemonByPokeType(pokeTypeFound.getId());
+        return pokemonRepository.findPokemonNotCapturedByPokeType(pokeType, pageable);
     }
 }
