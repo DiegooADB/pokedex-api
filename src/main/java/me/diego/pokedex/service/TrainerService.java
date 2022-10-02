@@ -46,7 +46,7 @@ public class TrainerService {
 
     @Transactional
     public Trainer saveTrainer(TrainerPostDTO trainer, Map<String, String> headers) {
-        if (!(findByName(trainer.getName()).isEmpty())) {
+        if (!(this.findByName(trainer.getName()).isEmpty())) {
             throw new ConflictException("Trainer with this name already exists");
         }
 
@@ -67,7 +67,7 @@ public class TrainerService {
 
         return trainerSaved;
     }
-    @Transactional
+
     public Trainer updateTrainerPokemon(Trainer trainer) {
         return trainerRepository.save(trainer);
     }

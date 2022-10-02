@@ -41,8 +41,6 @@ public class SecurityConfig {
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
     //Enable cors (permite requests de outros sites)
 //    @Bean
 //     CorsConfigurationSource corsConfigurationSource() {
