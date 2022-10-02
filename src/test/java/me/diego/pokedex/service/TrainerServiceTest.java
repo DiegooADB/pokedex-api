@@ -1,6 +1,7 @@
 package me.diego.pokedex.service;
 
 import me.diego.pokedex.exception.BadRequestException;
+import me.diego.pokedex.exception.ConflictException;
 import me.diego.pokedex.model.Pokemon;
 import me.diego.pokedex.model.Region;
 import me.diego.pokedex.model.Trainer;
@@ -163,6 +164,14 @@ class TrainerServiceTest {
 
         Assertions.assertThat(trainerSaved.getPokemons().get(0).getPokeName())
                 .isEqualTo(trainerExpected.getPokemons().get(0).getPokeName());
+    }
+
+    @Test
+    @DisplayName("saveTrainer throws ConflictException when trainer already exists")
+    void saveTrainer_throwsConflictException_WhenTrainerAlreadyExists() {
+        Assertions.assertThatExceptionOfType(ConflictException.class)
+                .isThrownBy(() -> trainerService
+                        .saveTrainer(TrainerCreator.createValidTrainerPostDto(), Map.of("authorization", "Bearer asdawd")));
     }
 
     @Test
