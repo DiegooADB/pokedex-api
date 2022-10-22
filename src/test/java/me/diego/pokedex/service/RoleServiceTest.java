@@ -48,4 +48,17 @@ class RoleServiceTest {
                 .isEqualTo(expectedRole.getRoleName());
 
     }
+
+    @Test
+    @DisplayName("findRoleByName throws BadRequestException when not found")
+    void findRoleByName_ThrowsBadRequestException_WhenNotFound() {
+
+        BDDMockito.when(roleRepository.findByRoleName(ArgumentMatchers.any(RoleName.class)))
+                .thenReturn(Optional.empty());
+
+        RoleName invalidRoleExample = RoleName.ROLE_USER;
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> roleService.findRoleByName(invalidRoleExample));
+    }
 }

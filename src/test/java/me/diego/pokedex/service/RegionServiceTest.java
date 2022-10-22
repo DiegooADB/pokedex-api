@@ -1,5 +1,7 @@
 package me.diego.pokedex.service;
 
+import me.diego.pokedex.enums.RoleName;
+import me.diego.pokedex.exception.BadRequestException;
 import me.diego.pokedex.model.Region;
 import me.diego.pokedex.repository.RegionRepository;
 import me.diego.pokedex.util.RegionCreator;
@@ -45,4 +47,15 @@ class RegionServiceTest {
                 .isEqualTo(expectedRegion.getRegionName());
 
     }
+
+    @Test
+    @DisplayName("findByRegionNameString throws BadRequestException when not found")
+    void findByRegionNameString_ThrowsBadRequestException_WhenNotFound() {
+        BDDMockito.when(regionRepository.findByRegionNameString(ArgumentMatchers.anyString()))
+                .thenReturn(Optional.empty());
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> regionService.findByRegionNameString("InvalidRegion"));
+    }
+
 }

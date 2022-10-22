@@ -1,13 +1,9 @@
 package me.diego.pokedex.service;
 
-import me.diego.pokedex.enums.PokeType;
 import me.diego.pokedex.exception.BadRequestException;
 import me.diego.pokedex.model.PokeTypeModel;
-import me.diego.pokedex.model.Pokemon;
 import me.diego.pokedex.repository.PokeTypeRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class PokeTypeService {
